@@ -1,5 +1,8 @@
 import React from 'react'
 import Main from '../components/main'
+import ReactMarkdown from 'react-markdown'
+import { logoText, logoWrap } from '../const/layout';
+
 const ctx = require('../markdown/thank.md')
 
 class Thank extends React.Component {
@@ -19,8 +22,11 @@ class Thank extends React.Component {
 
   render() {
     return (
-      <Main>
-        { this.state.ctx }
+      <Main ctxStyle={{
+        padding: "2rem"
+      }} path="/thanks">
+        <h1 style={ logoWrap }>{ logoText }</h1>
+        <ReactMarkdown source={ this.state.ctx } />
       </Main>
     )
   }

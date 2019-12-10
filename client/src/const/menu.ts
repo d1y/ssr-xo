@@ -29,7 +29,7 @@ export const menuLists = [
 export const fetchMenu = (path: string): string=> {
   let result: number = 0
   menuLists.forEach((item, index)=> {
-    if (item.path == path) {
+    if (item.path === path) {
       result = index
     }
   })

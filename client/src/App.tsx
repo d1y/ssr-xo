@@ -8,16 +8,14 @@ import {
 } from 'react-router-dom'
 
 import Index from './page/index'
-import Thank from './page/thank'
-import Fetch from './page/fetch'
+import Thank from './page/thanks'
 
 export default class extends React.Component {
   render() {
     return (
       <Router>
         <Route path="/index" component={ Index } />
-        <Route path="/thank" component={ Thank } />
-        <Route path="/fetch" component={ Fetch } />
+        <Route path="/thanks" component={ Thank } />
       </Router>
     )
   }

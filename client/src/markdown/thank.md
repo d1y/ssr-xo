@@ -1,6 +1,6 @@
 ## 致谢
 
-本项目拥抱开源, 感谢以下的开源项目(排名不分高低)
+本项目拥抱开源, 感谢以下的开源项目(排名不分名次)
 
 - https://github.com/nodejs/node
 - https://github.com/microsoft/TypeScript
