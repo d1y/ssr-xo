@@ -14,17 +14,16 @@ const cowsay = require('cowsay')
 ** 3. 查看当前 `hashMap` url
 */
 ;(async ()=> {
-  console.clear()
+  // console.clear()
   const port: number = await interPort()
-  server(port).then(()=> {
-    const text = `server listen to\n http://localhost:${ port }`
+  // console.log('port: ', port);
+  server(port).then((full)=> {
+    const text = `server listen to\n http://localhost:${ port }${ full }`
     const log =  cowsay.say({
       text,
     })
     console.log(log);
-    if (isDev) {
-      autoCreateAppPath()
-      initPID(true)
-    }
+    autoCreateAppPath()
+    initPID(true)
   })
 })()
