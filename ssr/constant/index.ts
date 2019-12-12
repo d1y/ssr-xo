@@ -14,4 +14,4 @@ export const SSR_REPO: string[] = [
 export const ROOT_PATH: string = path.join(userHome, ".xo")
 
 // `.pid` 文件
-export const APP_PID_FILE: string = path.join(userHome, 'xo.pid')
+export const APP_PID_FILE: string = path.join(ROOT_PATH, 'xo.pid')
