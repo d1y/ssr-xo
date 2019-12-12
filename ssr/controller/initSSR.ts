@@ -1,22 +1,19 @@
-import { isPythonInstalled } from './../utils/env';
+import { ssr_init } from './../utils/ssr';
 import router from '@koa/router'
 
-import { SSR_REPO } from "../constant"
-
-const downloadRepo = require('download-git-repo')
-
-const Router = new router({
-  prefix: 'ssr'
-})
+const Router = new router({ prefix: '/ssr' })
 
 Router
   .get('/check', async ctx=> {
-    ctx.body = {
-      isPython: isPythonInstalled
-    }
+    
   })
-  .get('/init', async ctx=> {
-
+  .post('/init', async ctx=> {
+    const isInit = await ssr_init()
+    console.log('创建中')
+    ctx.body = {
+      code: 200,
+      msg: isInit ? '成功' : '失败'
+    }
   })
 
 export default Router
