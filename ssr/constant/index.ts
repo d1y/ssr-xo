@@ -15,3 +15,9 @@ export const ROOT_PATH: string = path.join(userHome, ".xo")
 
 // `.pid` 文件
 export const APP_PID_FILE: string = path.join(ROOT_PATH, 'xo.pid')
+
+// `ssr` 目录
+export const SSR_PATH: string = path.join(ROOT_PATH, 'ssr')
+
+// 日志目录
+export const LOG_PATH: string = path.join(ROOT_PATH, 'log')
