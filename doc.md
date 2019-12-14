@@ -32,6 +32,8 @@ python local.py --args
 
 配置文件参考: https://github.com/shadowsocksr-backup/shadowsocks-rss/wiki/config.json
 
+> https://doubibackup.com/a6551xds-3.html
+
 ```json
 {
     "server": "0.0.0.0",    # 监听地址
