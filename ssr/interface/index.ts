@@ -1,5 +1,11 @@
 export interface ssrConfig {
 
+  // 名称
+  group?: string
+
+  // 备注
+  remarks?: string
+
   // 服务器地址
   server: string
 
@@ -16,10 +22,10 @@ export interface ssrConfig {
   // listen_host: string
 
   // 运行来自局域网的连接
-  shareOverLan?: boolean
+  // shareOverLan?: boolean
 
   // 本地监听端口
-  listen_port?: number
+  // listen_port?: number
 
   // tcp 超时连接
   timeout?: number
@@ -27,26 +33,26 @@ export interface ssrConfig {
   // 协议
   protocol?: string
 
+  // 协议参数
+  protocol_param?: string
+
   // 混淆
   obfs?: string
 
   // 混淆参数
   obfs_param?: string
 
-  // [propName: string]: any;
 }
 
-export interface ssConfig {
-  
-  // 服务器地址
-  server: string
+export interface returnMessage {
+  code: string
+  msg: string
+  data?: any
+}
 
-  // 加密方法
-  cipher: string
-
-  // 密码
-  password: string
-
-  // 端口
-  port: number
+export interface softVersion {
+  python: string
+  node: string
+  v8: string
+  xo: string
 }
