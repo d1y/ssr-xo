@@ -4,19 +4,17 @@
 
 import { join } from 'path'
 import fs from 'fs-extra'
-import { LOG_PATH } from '../constant';
-import { createFormatDate } from '.';
+import { createFormatDate } from '.'
+import { shadowsockRuntimeLogPath } from '../constant'
+import { allTextMsg } from '../constant/msgs'
 
-// ssr 运行路径
-export const shadowsockRuntimePath = join(LOG_PATH, 'shadowsock-client')
-
-export const logLevel = [
-  `error`, // 错误
-  `warn`,  // 警告
-  `info`,  // 提示
-  `verbose`, // 
-  `debug`    // 调试级别
-]
+export const enum logLevel {
+  error = 'error', // 错误
+  warn = 'warn',  // 警告
+  info = 'info',  // 提示
+  verbose = 'verbose', // 
+  debug = 'debug'   // 调试级别
+}
 
 /*
 ** 创建日志文本
@@ -24,9 +22,9 @@ export const logLevel = [
 ** @param { String } string
 ** @return { String }
 */
-export const createLog = (level: string, text: string): string => {
-  const now = (new Date).toString()
-  return `${ now } [{${ level }}] {${ text }}`
+export const createLogText = (level: string, text: string): string => {
+  const now = createFormatDate(new Date, true)
+  return `${ now } [${ level }] ${ text } \n`
 }
 
 /*
@@ -34,11 +32,10 @@ export const createLog = (level: string, text: string): string => {
 ** @param { String | Date } cp2 - 时间, 默认是当前
 ** @return { Boolean }
 */
-export const createLogFile = (cp2: string | Date = new Date): string => {
-  let log = createFormatDate(cp2)
-  // console.log('log: ', log);
-  if (!log) return ''
-  const path = join(shadowsockRuntimePath, `${ log }.log`)
+export const createLogFile = (time: string | Date = new Date): string => {
+  let filename = createFormatDate(time)
+  if (!filename) return ''
+  const path = join(shadowsockRuntimeLogPath, `${ filename }.log`)
   fs.ensureFileSync(path)
   return path
 }
@@ -48,18 +45,22 @@ export const createLogFile = (cp2: string | Date = new Date): string => {
 ** @param { String } path 路径
 ** @return { void }
 */
-export const appendWriteLogFile = (path: string, level: string, text: string)=> {
-  const log = createLog(level, text)
+export const appendWriteLogFile = (
+  path: string,
+  level: string,
+  text: string
+): void => {
+  const log = createLogText(level, text)
   fs.appendFileSync(path, log)
 }
 
 export default {
-  ssr: (level: string, text: string) => {
+  ssr: (level: string, ...text: string[]): void => {
     const path =  createLogFile()
       if (path) {
         appendWriteLogFile(path, level, path)
       } else {
-        throw new Error('未知错误')
+        throw new Error(allTextMsg.unknown)
       }
   }
 }
