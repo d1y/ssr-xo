@@ -34,6 +34,8 @@ export const shadowsockRuntimeLogPath: string = path.join(LOG_PATH, 'shadowsockC
 export const subLinkRuntimeLogPath: string = path.join(LOG_PATH, 'subscription')
 
 // `package.json` 内容
+// TODO 使用`fs`
+// export const dotJSON = fs.readJSON(path.join(process.cwd(), './package.json'))
 export const dotJSON = require(path.join(process.cwd(), './package.json'))
 
 // 状态码

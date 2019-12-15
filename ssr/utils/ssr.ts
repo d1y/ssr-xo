@@ -2,12 +2,13 @@ import { isDev } from './../config/index'
 import { mockSSR, mockSSRLink, mockSSLink } from './../mock/index'
 import { checkPort, Base64 } from '.'
 import { execFile } from 'child_process'
-import { isPythonInstalled } from './../utils/env'
+import { isPythonInstalled, pythonCLI } from './../utils/env'
 import { SSR_REPO, SSR_PATH } from "../constant"
 import logger, { logLevel } from './logger'
 import path from 'path'
 import { ssrConfig } from '../interface'
 import { allTextMsg } from '../constant/msgs'
+import fs from 'fs-extra'
 
 const downloadRepo = require('download-git-repo')
 
@@ -64,58 +65,65 @@ export class ssrRuntime {
   }
 
   // 运行
-  static run = async (appConfig: ssrConfig)=> {
-
+  static run = async (
+    appConfig: ssrConfig | string
+  )=> {
     // console.log('appConfig: ', appConfig);
-
+    if (typeof appConfig === 'string') {
+      const config = ssrUtils.decodeSSR(appConfig)
+      // console.log('config: ', config);
+      if (config) {
+        appConfig = config as ssrConfig
+      }
+    }
     // 是否允许来自局域网内的连接
     const listenHost = true ? '0.0.0.0' : '127.0.0.1'
 
-    // 先结束之前的
+    // 先结束之前的进程
     await ssrRuntime.stop()
 
-    const listen_port = 1080
+    const listen_port: number = 1080
 
     try {
       await checkPort(listenHost, listen_port)
     } catch (e) {
-      logger.ssr('error', e)
+      logger.ssr(logLevel.error, allTextMsg.portIsUsed, listen_port)
     }
-
+    const config: ssrConfig = appConfig as ssrConfig
     // 参数
-    const params = [ localPy ]
+    let params: Array<string | number> = [ localPy ]
     // 服务器地址
     params.push('-s')
-    params.push(appConfig.server)
+    params.push(config.server)
     // 服务器端口
     params.push('-p')
-    params.push((appConfig.port as any))
+    params.push(config.port)
     // 服务器密码
     params.push('-k')
-    params.push(`"${ appConfig.password }"`)
+    params.push(`"${ config.password }"`)
     // 加密方法
     params.push('-m')
-    params.push(appConfig.cipher)
+    params.push(config.cipher)
 
     // -------------
 
-    if (appConfig.protocol) {
+    if (config.protocol) {
       params.push('-O')
-      params.push(appConfig.protocol)
+      params.push(config.protocol)
     }
 
-    if (appConfig.protocol_param) {
+    if (config.protocol_param) {
       params.push('-G')
-      params.push(appConfig.protocol_param)
+      params.push(config.protocol_param)
     }
 
-    if (appConfig.obfs) {
+    if (config.obfs) {
       params.push('-o')
-      params.push(appConfig.obfs)
+      params.push(config.obfs)
     }
-    if (appConfig.obfs_param) {
+    if (config.obfs_param) {
       params.push('-g')
-      params.push(appConfig.obfs_param)
+      params.push(config.obfs_param)
     }
 
     // -------------
@@ -129,12 +137,12 @@ export class ssrRuntime {
     params.push((listen_port as any))
 
     // tcp 超时
-    if (appConfig.timeout) {
+    if (config.timeout) {
       params.push('-t')
-      params.push((appConfig.timeout as any))
+      params.push((config.timeout as any))
     }
 
-    runCommand('python', params)
+    runCommand(pythonCLI, params)
 
   }
 
@@ -163,6 +171,14 @@ export class ssrRuntime {
     return Promise.resolve()
   }
 
+  // 测试 `ssr` 安装状态
+  // TODO
+  static test = async (): Promise<boolean> => {
+    const isLocalPY: boolean = fs.pathExistsSync(localPy)
+    if (!isPythonInstalled || isLocalPY) return false
+    return true
+  }
+
 }
 
 export class ssrUtils {
@@ -170,7 +186,6 @@ export class ssrUtils {
   /*
   ** 将订阅拿到的数据转为 `ssr` 对象
   */
-
   static fetchDataToSSR = async (data: string): Promise<false | ssrConfig[]>=> {
     try {
       let body = Base64.decode(data)

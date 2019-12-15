@@ -44,14 +44,14 @@ export interface ssrConfig {
 
 }
 
-export interface returnMessage {
-  code: string
+export interface ReturnMessage {
+  code: number
   msg: string
   data?: any
 }
 
 export interface softVersion {
-  python: string
+  python: string | null
   node: string
   v8: string
   xo: string

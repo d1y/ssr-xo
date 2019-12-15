@@ -13,5 +13,7 @@ export const enum allTextMsg {
   downloadSSRSucess = '下载ssr成功',
   ssrIsStoped = 'ssr已经停止',
   readyStopBySSR = '准备停止ssr',
-  ssrNotClose = 'ssr关闭失败, 未知原因'
+  ssrNotClose = 'ssr关闭失败, 未知原因',
+  getSoftVersion = '获取软件版本成功',
+  portIsUsed = '端口已经被使用'
 }

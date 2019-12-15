@@ -55,7 +55,7 @@ export const appendWriteLogFile = (
 }
 
 export default {
-  ssr: (level: string, ...text: string[]): void => {
+  ssr: (level: string, ...text: Array<string | number>): void => {
     const path =  createLogFile()
       if (path) {
         appendWriteLogFile(path, level, path)

@@ -2,7 +2,12 @@ import { pythonVersion } from './env'
 import { softVersion } from './../interface'
 import * as fs from 'fs-extra'
 import crypto from 'crypto'
-import { ROOT_PATH, APP_PID_FILE, LOG_PATH } from './../constant'
+import {
+  ROOT_PATH,
+  APP_PID_FILE,
+  LOG_PATH,
+  dotJSON
+} from './../constant'
 import base64 from 'urlsafe-base64'
 
 // 检查端口是否被占用
@@ -125,7 +130,7 @@ export const fetchSoftVersion = (): softVersion => {
     python: pythonVersion,
     node: process.version,
     v8: process.versions.v8,
-    xo: ''
+    xo: dotJSON['version']
   }
   return soft
 }
