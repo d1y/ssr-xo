@@ -4,6 +4,8 @@ import { isDev } from './config/index'
 
 import server from './server'
 import { interPort } from './config'
+import { AppRuntimeConf } from './interface'
+import { setUpAppConf } from './utils/ssr'
 
 const cowsay = require('cowsay')
 
@@ -17,13 +19,26 @@ const cowsay = require('cowsay')
   // console.clear()
   const port: number = await interPort()
   // console.log('port: ', port);
-  server(port).then((full)=> {
-    const text = `server listen to\n http://localhost:${ port }${ full }`
+  server(port).then((APPCONF: any) => {
+    const conf: AppRuntimeConf = APPCONF
+    conf['port'] = port
+    let url: string = `http://localhost:${ conf['port'] }`
+    if (!isDev) url += `/${ conf['longUUID'] }/${ conf['tinyUUID'] }`
+    const text = `server listen to\n ${ url }`
     const log =  cowsay.say({
       text,
     })
     console.log(log);
     autoCreateAppPath()
     initPID(true)
+    setUpAppConf(conf)
+  }).catch((err: any)=> {
+    throw new Error(err)
+    process.exit()
   })
 })()
+
+// TODO
+process.on('SIGINT', ()=> {
+  console.log('进程已经关闭')
+})

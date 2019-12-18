@@ -1,0 +1,86 @@
+# create by @d1y in 2019-12-18
+# 目前所有的接口地址都在 `/api` 下
+@api = http://localhost:2333/api
+@sub = {{api}}/ssr/sub
+
+# ssr相关
+
+## ssr方法
+
+### 初始化`ssr`
+
+POST {{api}}/ssr/init
+
+### 检测`ssr`
+
+GET {{api}}/ssr/check
+
+##
+
+## 订阅相关
+
+### 获取订阅列表
+GET {{sub}}/list
+###
+
+### 添加订阅列表
+POST {{sub}}/add
+Content-Type: application/json
+
+{
+  "url": "http://github.com"
+}
+
+###
+
+### 删除单个
+POST {{sub}}/remove
+Content-Type: application/json
+# 可传递base64
+
+{
+  "url": "http://github.com"
+}
+
+###
+
+### 删除全部
+POST {{sub}}/remove
+###
+
+### 更新订阅`url`
+@code = aHR0cDovL2dpdGh1Yi5jb20
+POST {{sub}}/update/{{code}}
+Content-Type: application/json
+
+{
+  "url": "http://google.com"
+}
+
+### 更新订阅时间
+@code = aHR0cDovL2dpdGh1Yi5jb20
+POST {{sub}}/update/{{code}}
+Content-Type: application/json
+
+{
+  "update": {{$timestamp}}
+}
+
+###
+
+### 运行
+POST {{api}}/ssr/run
+Content-Type: application/json
+
+{
+  "url": "https://cylink.sub.tips/link/aywrT2Kxg7UtiOJ7?clash=1"
+}
+
+###
+
+##
+
+
+##
+
+#

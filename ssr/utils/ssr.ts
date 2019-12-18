@@ -1,19 +1,22 @@
 import { isDev } from './../config/index'
 import { mockSSR, mockSSRLink, mockSSLink } from './../mock/index'
-import { checkPort, Base64 } from '.'
+import { checkPort, Base64, writeToMainLogFile } from '.'
 import { execFile } from 'child_process'
 import { isPythonInstalled, pythonCLI } from './../utils/env'
-import { SSR_REPO, SSR_PATH } from "../constant"
+import { 
+  SSR_REPO, 
+  SSR_PATH,
+  ssrLocalPy,
+  xoRuntimeConfigFile,
+  subLinkStatus
+} from "../constant"
 import logger, { logLevel } from './logger'
-import path from 'path'
-import { ssrConfig } from '../interface'
+import { ssrConfig, AppRuntimeConf } from '../interface'
 import { allTextMsg } from '../constant/msgs'
 import fs from 'fs-extra'
-
+import lowDB, { subLinkFileWrapper } from './lowdb'
+import { subLinkItemInterface } from '../interface/index';
 const downloadRepo = require('download-git-repo')
-
-// 运行文件
-export const localPy: string = path.join(SSR_PATH, `./shadowsocks/local.py`)
 
 // `ssr` 进程
 export let child: any
@@ -56,6 +59,7 @@ export class ssrRuntime {
           rcv(flag ? false : true)
           logger.ssr(logLevel.info, allTextMsg.downloadSSRSucess)
         })
+        
       })
     } catch (e) {
       logger.ssr(logLevel.error, allTextMsg.downloadSSRFail)
@@ -91,7 +95,7 @@ export class ssrRuntime {
     }
     const config: ssrConfig = appConfig as ssrConfig
     // 参数
-    let params: Array<string | number> = [ localPy ]
+    let params: Array<string | number> = [ ssrLocalPy ]
     // 服务器地址
     params.push('-s')
     params.push(config.server)
@@ -146,6 +150,14 @@ export class ssrRuntime {
 
   }
 
+  // 运行 `ss` | `ssr` 链接
+  static runLink = async (link: string)=> {
+    const conf = ssrUtils.decodeSSR(link)
+    if (conf) {
+      ssrRuntime.run(conf as ssrConfig)
+    } else return false
+  }
+
   // 结束command的后台运行
   // TODO
   static stop = (force = false)=> {
@@ -174,8 +186,9 @@ export class ssrRuntime {
   // 测试 `ssr` 安装状态
   // TODO
   static test = async (): Promise<boolean> => {
-    const isLocalPY: boolean = fs.pathExistsSync(localPy)
-    if (!isPythonInstalled || isLocalPY) return false
+    const isLocalPY: boolean = fs.pathExistsSync(ssrLocalPy)
+    // console.log('isLocalPY: ', isLocalPY);
+    if (!isPythonInstalled || !isLocalPY) return false
     return true
   }
 
@@ -328,17 +341,45 @@ export class ssrUtils {
     return [false]
   }
 
+  // 添加订阅
+  static addSubLink(url: string): subLinkStatus {
+    return subLinkFileWrapper(url).add()
+  }
+
+  // 删除订阅
+  static removeSubLink(url: string): boolean {
+    return subLinkFileWrapper(url).remove()
+  }
+
+  // 获取订阅
+  static getSubLink(url?: string): any[] | null {
+    return subLinkFileWrapper(url).get()
+  }
+
+  // 更新订阅
+  static updateSubLink(code: string, conf: subLinkItemInterface): boolean {
+    return subLinkFileWrapper(code).update(conf)
+  }
+
 }
 
-// 测试连接
-if (isDev) {
-  // let code = ssrUtils.decodeSSR(mockSSRLink)
-  // if (code) {
-  //   ssrRuntime.run((code as ssrConfig))
-  // }
-  // let code = ssrUtils.decodeSSR(mockSSLink)
-  // console.log('code: ', code);
-  // console.log('code: ', code);
-  // ssrUtils.ssrDecode(code)
-  // runWithConfig(code)
+export const readAppConfZero = (): AppRuntimeConf | boolean => {
+  try {
+    const config: AppRuntimeConf = JSON.parse(fs.readFileSync(xoRuntimeConfigFile, 'UTF-8'))
+    return config
+  } catch (error) {
+    return false
+  }
+}
+
+export const setUpAppConf = (conf: AppRuntimeConf): boolean => {
+  writeToMainLogFile(1,2)
+  try {
+    fs.writeFileSync(xoRuntimeConfigFile, JSON.stringify(conf), {
+      encoding: 'utf-8'
+    })
+  } catch (error) {
+    writeToMainLogFile(error)
+  }
+  return true
 }

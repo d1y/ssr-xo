@@ -24,19 +24,39 @@ export const SSR_PATH: string = path.join(ROOT_PATH, 'ssr')
 // 日志目录
 export const LOG_PATH: string = path.join(ROOT_PATH, 'log')
 
-// 订阅节点目录
-export const SUB_PATH: string = path.join(ROOT_PATH, 'sub')
-
 // ssr 运行日志路径
 export const shadowsockRuntimeLogPath: string = path.join(LOG_PATH, 'shadowsockClient')
 
-// 订阅节点更新日志
-export const subLinkRuntimeLogPath: string = path.join(LOG_PATH, 'subscription')
+// 订阅节点目录
+export const SUB_PATH: string = path.join(ROOT_PATH, 'sub')
+
+// 订阅节点配置文件
+export const subLinkMainProfile: string = path.join(SUB_PATH, 'subscription.conf')
+
+// 订阅节点
+export const subLinkUnderProfile: string = path.join(SUB_PATH, './node')
+
+// 配置节点
 
 // `package.json` 内容
 // TODO 使用`fs`
 // export const dotJSON = fs.readJSON(path.join(process.cwd(), './package.json'))
-export const dotJSON = require(path.join(process.cwd(), './package.json'))
+export let dotJSON: any
+try {
+  dotJSON = require(path.join(process.cwd(), './package.json'))  
+} catch (error) {
+  // TODO 打印日志到主日志
+  dotJSON = false
+}
+
+// 运行时文件
+export const ssrLocalPy: string = path.join(SSR_PATH, './shadowsocks/local.py')
+
+// 运行时的配置文件
+export const xoRuntimeConfigFile: string = path.join(ROOT_PATH, './xo.conf')
+
+// `xo` 运行日志
+export const appRuntimeLogFile: string = path.join(ROOT_PATH, 'main.log')
 
 // 状态码
 export const enum statusCode {
@@ -54,4 +74,10 @@ export const enum routerPrefix {
   wrapper = '/api',
   ssr = '/ssr',
   utils = '/utils'
+}
+
+export enum subLinkStatus {
+  success,
+  fail,
+  already
 }

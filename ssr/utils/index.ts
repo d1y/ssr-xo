@@ -6,9 +6,13 @@ import {
   ROOT_PATH,
   APP_PID_FILE,
   LOG_PATH,
-  dotJSON
+  dotJSON,
+  appRuntimeLogFile,
+  xoRuntimeConfigFile,
+  subLinkMainProfile
 } from './../constant'
 import base64 from 'urlsafe-base64'
+import { subLinkUnderProfile } from '../constant/index';
 
 // 检查端口是否被占用
 export const checkPort = require('ck-port/checkPort')
@@ -21,7 +25,14 @@ export const autoCreateAppPath = (): void=> {
   fs.ensureDirSync(LOG_PATH)
   // `.pid` 为程序运行时的`pid`, 方便直接 `kill` 程序
   fs.ensureFileSync(APP_PID_FILE)
-
+  // 创建 `xo.conf` 配置文件
+  fs.ensureFileSync(xoRuntimeConfigFile)
+  // 主进程日志文件
+  fs.ensureFileSync(appRuntimeLogFile)
+  // 订阅节点配置文件
+  fs.ensureFileSync(subLinkMainProfile)
+  // 订阅节点
+  fs.ensureDirSync(subLinkUnderProfile)
 }
 
 /*
@@ -77,16 +88,17 @@ const autoAddByZero = (n: number): string => {
 
 /*
 ** 生成日期
-** @param { String | Date } format 需要格式化的时间
+** @param { String | Date } withTime 需要格式化的时间
 ** @param { Boolean } full 是否返回完整的时间
 ** @return { String | Boolean }
 */
 export const createFormatDate = (
-  format: string | Date = new Date,
+  withTime: string | Date = new Date,
   full: boolean = false
 ): string => {
+  
   try {
-    const time = new Date()
+    const time: Date = new Date(withTime)
     let 
       y = time.getFullYear(),
       m: string | number = time.getMonth(),
@@ -126,11 +138,27 @@ export const Base64 = {
 
 // 返回版本号
 export const fetchSoftVersion = (): softVersion => {
+  let xo: string | null
+  if (!dotJSON) {
+    xo = null
+  } else xo = dotJSON['version']
   const soft: softVersion = {
     python: pythonVersion,
     node: process.version,
     v8: process.versions.v8,
-    xo: dotJSON['version']
+    xo
   }
   return soft
+}
+
+// 写入主日志
+let mainByte: boolean = false
+export const writeToMainLogFile = (...args: Array<any>): void => {
+  if (mainByte) {
+    fs.writeFileSync(appRuntimeLogFile, '')
+    mainByte = true
+  }
+  args.forEach(item=> {
+    fs.appendFileSync(appRuntimeLogFile, item)
+  })
 }

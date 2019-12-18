@@ -1,3 +1,4 @@
+// `ssr` 配置
 export interface ssrConfig {
 
   // 名称
@@ -44,15 +45,34 @@ export interface ssrConfig {
 
 }
 
+// 统一的返回接口
 export interface ReturnMessage {
   code: number
   msg: string
   data?: any
 }
 
+// 应用版本
 export interface softVersion {
   python: string | null
   node: string
   v8: string
-  xo: string
+  xo: string | null
+}
+
+// 应用启动附带的配置
+export interface AppRuntimeConf {
+  // 端口号
+  port: number
+  longUUID: string
+  tinyUUID: string
+}
+
+export interface subLinkItemInterface {
+  // 更新的链接
+  url: string
+  // 更新的时间
+  update: number
+  // 根据`url`生成的`base64`码
+  encode?: string
 }

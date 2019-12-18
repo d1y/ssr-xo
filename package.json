@@ -15,6 +15,7 @@
     "get-port": "^5.0.0",
     "got": "^10.0.4",
     "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
     "koa-favicon": "^2.0.1",
     "koa-logger": "^3.2.1",
     "koa-mount": "^4.0.0",
