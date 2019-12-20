@@ -8,14 +8,16 @@ import {
   SSR_PATH,
   ssrLocalPy,
   xoRuntimeConfigFile,
-  subLinkStatus
+  subLinkStatus,
+  subLinkUnderProfile
 } from "../constant"
 import logger, { logLevel } from './logger'
 import { ssrConfig, AppRuntimeConf } from '../interface'
 import { allTextMsg } from '../constant/msgs'
 import fs from 'fs-extra'
-import lowDB, { subLinkFileWrapper } from './lowdb'
-import { subLinkItemInterface } from '../interface/index';
+import { subLinkFileWrapper } from './lowdb'
+import { subLinkItemInterface } from '../interface/index'
+import path from 'path'
 const downloadRepo = require('download-git-repo')
 
 // `ssr` 进程
@@ -342,23 +344,35 @@ export class ssrUtils {
   }
 
   // 添加订阅
-  static addSubLink(url: string): subLinkStatus {
+  static addSubLink(url: string) {
     return subLinkFileWrapper(url).add()
   }
 
   // 删除订阅
-  static removeSubLink(url: string): boolean {
-    return subLinkFileWrapper(url).remove()
+  static removeSubLink(id?: string): boolean {
+    return subLinkFileWrapper(id).remove()
   }
 
-  // 获取订阅
-  static getSubLink(url?: string): any[] | null {
-    return subLinkFileWrapper(url).get()
+  // 获取订阅, 不传递则为获取全部
+  static getSubLink(id?: string): any[] | null {
+    return subLinkFileWrapper(id).get()
   }
 
   // 更新订阅
-  static updateSubLink(code: string, conf: subLinkItemInterface): boolean {
-    return subLinkFileWrapper(code).update(conf)
+  static updateSubLink(id: string, conf: subLinkItemInterface): boolean {
+    return subLinkFileWrapper(id).update(conf)
+  }
+
+  // 创建订阅
+  static createSubLinkNodeFile(code: string, data: any): boolean {
+    try {
+      const full = path.join(subLinkUnderProfile, `${ code }.json`)
+      fs.ensureFileSync(full)
+      fs.writeFileSync(full, JSON.stringify(data))
+      return true
+    } catch (e) {
+      return false
+    }
   }
 
 }

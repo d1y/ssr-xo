@@ -1,6 +1,6 @@
 import { ssrRuntime, ssrUtils } from '../utils/ssr'
 import router from '@koa/router'
-import { statusCode, routerPrefix } from '../constant'
+import { statusCode, routerPrefix, subLinkStatus } from '../constant'
 import { statusMsg, allTextMsg } from '../constant/msgs'
 import { ReturnMessage } from '../interface'
 import { fetchSubDataLink } from '../utils/request'
@@ -29,22 +29,28 @@ Sub
   .post('/add', async ctx=> {
     const { url } = ctx.request.body
     const code = ssrUtils.addSubLink(url)
-    const isFail = code > 0
+    const isFail = typeof code != 'string'
+    let msg = isFail ? allTextMsg.addSubLinkItemFail : allTextMsg.addSubLinkItemSucess
+    if (subLinkStatus.already == code) {
+      msg = allTextMsg.addSubLinkItemSucessAlready
+    }
     const Return: ReturnMessage = {
       code: isFail ? statusCode.fail : statusCode.success,
-      msg:  isFail ? allTextMsg.addSubLinkItemFail : allTextMsg.addSubLinkItemSucess,
+      msg,
+      data: code
     }
     ctx.body = Return
   })
 
   .post('/remove', async ctx=> {
-    const { url } = ctx.request.body
-    const isRemove = ssrUtils.removeSubLink(url)
+    const { id } = ctx.request.body
+    console.log('id: ', id);
+    const isRemove = ssrUtils.removeSubLink(id)
     let msg = {
       success: '',
       fail: ''
     }
-    if (url) {
+    if (id) {
       msg['success'] = allTextMsg.removeSubLinkItemSucess
       msg['fail'] = allTextMsg.removeSubLinkItemFail
     } else {
@@ -53,7 +59,8 @@ Sub
     }
     const Return: ReturnMessage = {
       code: isRemove ? statusCode.success : statusCode.fail,
-      msg: isRemove ? msg['success'] : msg['fail']
+      msg: isRemove ? msg['success'] : msg['fail'],
+      data: id
     }
     ctx.body = Return
   })
@@ -97,9 +104,12 @@ Router
   .post('/run', async ctx=> {
     const body = ctx.request.body
     const { url } = body
-    console.log('url: ', url);
     const data = await fetchSubDataLink(url)
-    console.log('data: ', data);
+    const Return: ReturnMessage = {
+      code: data ? statusCode.success : statusCode.fail,
+      msg: data ? allTextMsg.updateOnceByLinkSucess : allTextMsg.updateOnceByLinkFail
+    }
+    ctx.body = Return
   })
   .use('/sub', Sub.routes(), Sub.allowedMethods())
 

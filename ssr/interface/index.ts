@@ -73,6 +73,6 @@ export interface subLinkItemInterface {
   url: string
   // 更新的时间
   update: number
-  // 根据`url`生成的`base64`码
-  encode?: string
+  // id
+  id: string
 }

@@ -6,7 +6,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import { subLinkMainProfile, subLinkStatus } from '../constant'
-import { Base64 } from '.'
+import { Base64, createSubLinkUUID } from '.'
 import { subLinkItemInterface } from '../interface'
 
 interface lowDBInterface {
@@ -81,7 +81,7 @@ export const save = (conf: saveInterface): boolean | lowDB => {
 }
 
 // 订阅实例
-export const subLinkFileWrapper = (url?: string) => {
+export const subLinkFileWrapper = (value?: string) => {
   const lowdb: lowDB = new lowDB({
     file: subLinkMainProfile
   })
@@ -91,38 +91,38 @@ export const subLinkFileWrapper = (url?: string) => {
   } catch (e) {
     data = []
   }
-  // TODO
-  if (url && Base64.validate(url)) {
-    url = Base64.decode(url)
-  }
   let index: number | false = false
   const isAlready = data.some((item: subLinkItemInterface, i)=> {
-    if (item['url'] == url) {
+    if (item['id'] == value) {
       index = i
       return true
     }
   })
   return {
+    // 如果不传递value, 获取全部
     get: (): subLinkItemInterface[] | null=> {
-      if (!url) return data
+      if (!value) return data
       if (index) {
         return data[index]
       }
       return null
     },
     add() {
+      const isAlready = data.some((item: subLinkItemInterface)=> {
+        return item['url'] == value
+      })
       if (isAlready) return subLinkStatus.already
-      const encode: string = Base64.encode(url as string)
       const update: number = Date.now()
+      let id = createSubLinkUUID()
       const subLinkItem: subLinkItemInterface = {
-        url: url as string,
+        url: value as string,
         update,
-        encode
+        id
       }
       try {
         data.unshift(subLinkItem)
         lowdb.save(data)
-        return subLinkStatus.success
+        return id // subLinkStatus.success
       } catch (error) {
         return subLinkStatus.fail
       }
@@ -136,7 +136,7 @@ export const subLinkFileWrapper = (url?: string) => {
         } catch (e) {
           return false
         }
-      } else if (!index && !url) {
+      } else if (!index && !value) {
         // 删除全部!
         try {
           lowdb.save([])
@@ -157,7 +157,6 @@ export const subLinkFileWrapper = (url?: string) => {
       if (typeof index === 'boolean') return false
       if (url) {
         data[index]['url'] = url
-        data[index]['encode'] = Base64.encode(url)
       } else if (update) {
         // TODO: update返回一个`boolean`, 后端自动生成时间戳
         data[index]['update'] = update

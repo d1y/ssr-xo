@@ -60,6 +60,14 @@ export const hexUUID = (): string => {
   return crypto.randomBytes(256 / 100).toString('hex')
 }
 
+// 创建订阅节点ID
+export const createSubLinkUUID = (): string=> {
+  let id: string = hexUUID()
+  let random = (Math.random()*10) * Math.random() * 20
+  id += Math.floor(random)
+  return id
+}
+
 /*
 ** 判断是不是同一天
 ** @param { String | Date } old 日期1

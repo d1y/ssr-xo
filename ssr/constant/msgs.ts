@@ -22,10 +22,13 @@ export const enum allTextMsg {
   getSubLinkListFail = '获取订阅列表失败',
   addSubLinkItemFail = '添加订阅失败',
   addSubLinkItemSucess = '添加订阅成功',
+  addSubLinkItemSucessAlready = '添加订阅失败, 地址重复',
   removeSubLinkAllSucess = '删除所有订阅成功',
   removeSubLinkAllFail = '删除所有定订阅失败',
   removeSubLinkItemSucess = '删除单个订阅成功',
   removeSubLinkItemFail = '删除单个订阅失败',
   updateSubLinkItemSucess = '更新单个订阅成功',
-  updateSubLinkItemFail = '更新单个订阅失败'
+  updateSubLinkItemFail = '更新单个订阅失败',
+  updateOnceByLinkSucess = '更新订阅成功',
+  updateOnceByLinkFail = '更新订阅失败'
 }

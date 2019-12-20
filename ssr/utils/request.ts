@@ -1,8 +1,9 @@
 import { ssrUtils } from './ssr'
 import { ssrConfig } from './../interface'
 import got from 'got'
-import logger from './logger'
+import logger, { logLevel } from './logger'
 import { allTextMsg } from '../constant/msgs'
+import { Base64 } from '.'
 
 export const fetchSubDataLink = async (url: string): Promise<false | ssrConfig[]>=> {
 
@@ -10,10 +11,18 @@ export const fetchSubDataLink = async (url: string): Promise<false | ssrConfig[]
   try {
     const res = await got(url)
     let body: string = res.body
-    return ssrUtils.fetchDataToSSR(body)
+    const config = ssrUtils.fetchDataToSSR(body)
+    if (config) {
+      const code = Base64.encode(url)
+      ssrUtils.createSubLinkNodeFile(code, config)
+      return config
+    } else {
+      logger.ssr(logLevel.error, allTextMsg.subNodeFail, url)
+      return false
+    }
     // TODO 发送请求之后, 将此时的更新的时间更新到某个文件中
   } catch (e) {
-    logger.ssr('error', allTextMsg.subNodeFail, url)
+    logger.ssr(logLevel.error, allTextMsg.subNodeFail, url)
     return false
   }
   
