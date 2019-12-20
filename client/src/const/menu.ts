@@ -1,13 +1,13 @@
 export const menuLists = [
   {
-    icon: 'setting',
-    text: '设置',
-    path: '/',
-  },
-  {
     icon: 'sliders',
     text: '代理',
     path: '/proxy',
+  },
+  {
+    icon: 'setting',
+    text: '设置',
+    path: '/',
   },
   {
     icon: 'api',
