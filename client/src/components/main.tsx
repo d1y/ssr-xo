@@ -3,6 +3,9 @@ import {
   Layout,
   Menu,
   Icon,
+  Row,
+  Col,
+  Switch
 } from 'antd'
 
 import { Link } from 'react-router-dom'
@@ -15,6 +18,8 @@ import {
   menuLists,
   fetchMenu
 } from '../const/menu'
+
+import logo from '../static/open.svg'
 
 const {
   Sider,
@@ -32,6 +37,8 @@ interface Props extends React.Props<any> {
   readonly wrapStyle?: Object
 }
 
+const width = `100`
+
 export default class extends React.Component<Props> {
 
   clickMenuHandle() {
@@ -41,30 +48,48 @@ export default class extends React.Component<Props> {
   render() {
     let { path, ctxStyle, wrapStyle } = this.props
     const now = fetchMenu((path as string))
-    ctxStyle = Object.assign({ padding: '1rem' },ctxStyle)
+    ctxStyle = Object.assign({ padding: '1rem' }, ctxStyle)
     wrapStyle = Object.assign({
-      height: '88vh',
+      height: `${width}vh`,
       overflow: 'hidden'
     }, wrapStyle)
     return (
       <React.Fragment>
-        <Layout style={ wrapStyle }>
-          <Header style={ logoWrap }>
-            { logoText }
+        <Layout style={wrapStyle}>
+          <Header style={logoWrap}>
+            <Row>
+              <Col span={8}>
+                <img src={ logo } />
+                {logoText}
+              </Col>
+              <Col style={{
+                textAlign: 'right'
+              }} span={8} offset={8}>
+                <span style={{
+                  fontSize: `14px`,
+                  position: `relative`,
+                  top: `-3px`,
+                  left: `-8px`,
+                  color: `rgba(255, 255, 255, .6)`
+                }}>{ false ? '🚀开启SSR' : '✋关闭SSR' }</span>
+                <Switch
+                  checkedChildren={<Icon type="check" />}
+                  unCheckedChildren={<Icon type="close" />}
+                  defaultChecked
+                />
+              </Col>
+            </Row>
           </Header>
           <Layout>
             <Sider theme="light">
               <div>
-                <Menu
-                  defaultSelectedKeys={[ now ]}
-                  mode="inline"
-                >
-                  { menuLists.map((item, index)=> {
+                <Menu defaultSelectedKeys={[now]} mode="inline" >
+                  { menuLists.map((item, index) => {
                     return (
-                      <Menu.Item onClick={ e=> this.clickMenuHandle  } key={ index }>
-                        <Link to={ item.path }>
-                        <Icon type={ item.icon } />
-                        <span>{ item.text }</span>
+                      <Menu.Item onClick={e => this.clickMenuHandle} key={index}>
+                        <Link to={item.path}>
+                          <Icon type={item.icon} />
+                          <span>{item.text}</span>
                         </Link>
                       </Menu.Item>
                     )
@@ -72,8 +97,8 @@ export default class extends React.Component<Props> {
                 </Menu>
               </div>
             </Sider>
-            <Content style={ ctxStyle }>
-              { this.props.children }
+            <Content style={ctxStyle}>
+              {this.props.children}
             </Content>
           </Layout>
         </Layout>

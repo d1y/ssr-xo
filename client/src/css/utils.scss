@@ -1,0 +1,43 @@
+@import './var.scss';
+
+.box-wrapper {
+  padding: 12px $sm;
+  border-radius: $sm;
+}
+
+.box-wrapper button {
+  margin: 0 $sm;
+}
+
+.margin-sm {
+  margin: $sm;
+}
+
+.margin-top-sm {
+  margin-top: $sm;
+}
+
+.margin-bottom-sm {
+  margin-bottom: $sm;
+}
+
+.margin-bottom-lg {
+  margin-bottom: $lg;
+}
+
+.margin-left-sm {
+  margin-left: $sm;
+}
+
+.margin-left-lg {
+  margin-left: $lg;
+}
+
+.margin-right-sm {
+  margin-right: $sm;
+}
+
+.margin-right-lg {
+  margin-right: $lg;
+}
+

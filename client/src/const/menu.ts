@@ -15,15 +15,20 @@ export const menuLists = [
     path: '/log',
   },
   {
+    icon: 'github',
+    text: '致谢',
+    path: '/thanks'
+  },
+  {
+    icon: 'experiment',
+    text: '系统状态',
+    path: '/status'
+  },
+  {
     icon: 'alert',
     text: '使用说明',
     path: '/help',
   },
-  {
-    icon: 'github',
-    text: '致谢',
-    path: '/thanks'
-  }
 ]
 
 export const fetchMenu = (path: string): string=> {

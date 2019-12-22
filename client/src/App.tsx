@@ -10,6 +10,7 @@ import {
 import Index from './page/index'
 import Thank from './page/thanks'
 import Proxy from './page/proxy'
+import Status from './page/status'
 
 export default class extends React.Component {
   render() {
@@ -18,6 +19,7 @@ export default class extends React.Component {
         <Route path="/index" component={ Index } />
         <Route path="/thanks" component={ Thank } />
         <Route path="/proxy" component={ Proxy } />
+        <Route path="/status" component={ Status } />
       </Router>
     )
   }

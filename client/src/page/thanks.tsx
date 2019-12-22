@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 import Main from '../components/main'
 import ReactMarkdown from 'react-markdown'
 import { logoText, logoWrap } from '../const/layout';
 
 const ctx = require('../markdown/thank.md')
 
-class Thank extends React.Component {
+class Thank extends PureComponent {
 
   state = {
     ctx: ""
