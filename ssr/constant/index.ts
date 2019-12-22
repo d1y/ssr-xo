@@ -76,8 +76,12 @@ export const enum routerPrefix {
   utils = '/utils'
 }
 
+// 添加节点时的状态
 export enum subLinkStatus {
   success,
   fail,
   already
 }
+
+// 节点请求网络时的timeout
+export const fetchSubDataLinkTimeout = 5000

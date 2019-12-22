@@ -28,7 +28,8 @@ POST {{sub}}/add
 Content-Type: application/json
 
 {
-  "url": "http://github.com"
+  "url": "http://github.com",
+  "note": "测试节点"
 }
 
 ###
@@ -54,7 +55,7 @@ POST {{sub}}/update/{{id}}
 Content-Type: application/json
 
 {
-  "url": "http://google.com"
+  "url": "http://baidu.com"
 }
 
 ### 更新订阅时间

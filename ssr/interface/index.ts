@@ -75,4 +75,8 @@ export interface subLinkItemInterface {
   update: number
   // id
   id: string
+  // note
+  note: string
+  // list
+  list?: ssrConfig[]
 }

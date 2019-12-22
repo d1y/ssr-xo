@@ -5,9 +5,10 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import { subLinkMainProfile, subLinkStatus } from '../constant'
+import { subLinkMainProfile, subLinkStatus, subLinkUnderProfile, SUB_PATH } from '../constant'
 import { Base64, createSubLinkUUID } from '.'
 import { subLinkItemInterface } from '../interface'
+import { ssrUtils } from './ssr'
 
 interface lowDBInterface {
   file: string
@@ -101,13 +102,31 @@ export const subLinkFileWrapper = (value?: string) => {
   return {
     // 如果不传递value, 获取全部
     get: (): subLinkItemInterface[] | null=> {
-      if (!value) return data
-      if (index) {
-        return data[index]
+      console.log('index: ', index);
+      console.log('value: ', value);
+      if (!value) {
+        return data.map(item=> {
+          try {
+            item['list'] = ssrUtils.fetchSubLinkNodeFile(item['id'])
+          } catch (error) {
+            item['list'] = []
+          }
+          return item
+        })
+      }
+      if (index >= 0) {
+        let result = data[index as number]
+        try {
+          result['list'] = ssrUtils.fetchSubLinkNodeFile(result['id'])
+        } catch (error) {
+          result['list'] = []
+        }
+        return result
       }
       return null
     },
-    add() {
+    // 前端传递
+    add(note: string) {
       const isAlready = data.some((item: subLinkItemInterface)=> {
         return item['url'] == value
       })
@@ -117,7 +136,8 @@ export const subLinkFileWrapper = (value?: string) => {
       const subLinkItem: subLinkItemInterface = {
         url: value as string,
         update,
-        id
+        id,
+        note
       }
       try {
         data.unshift(subLinkItem)
@@ -132,6 +152,7 @@ export const subLinkFileWrapper = (value?: string) => {
         try {
           data.splice((index as number), 1)
           lowdb.save(data)
+          fs.unlinkSync(path.join(subLinkUnderProfile, `${value}.json`))
           return true
         } catch (e) {
           return false
@@ -140,6 +161,7 @@ export const subLinkFileWrapper = (value?: string) => {
         // 删除全部!
         try {
           lowdb.save([])
+          fs.removeSync(SUB_PATH)
           return true
         } catch(e) {
           return false

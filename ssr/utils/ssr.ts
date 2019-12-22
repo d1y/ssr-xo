@@ -1,5 +1,5 @@
 import { isDev } from './../config/index'
-import { mockSSR, mockSSRLink, mockSSLink } from './../mock/index'
+// import { mockSSR, mockSSRLink, mockSSLink } from './../mock/index'
 import { checkPort, Base64, writeToMainLogFile } from '.'
 import { execFile } from 'child_process'
 import { isPythonInstalled, pythonCLI } from './../utils/env'
@@ -8,7 +8,6 @@ import {
   SSR_PATH,
   ssrLocalPy,
   xoRuntimeConfigFile,
-  subLinkStatus,
   subLinkUnderProfile
 } from "../constant"
 import logger, { logLevel } from './logger'
@@ -18,6 +17,7 @@ import fs from 'fs-extra'
 import { subLinkFileWrapper } from './lowdb'
 import { subLinkItemInterface } from '../interface/index'
 import path from 'path'
+import { fetchSubDataLink } from './request'
 const downloadRepo = require('download-git-repo')
 
 // `ssr` 进程
@@ -343,30 +343,38 @@ export class ssrUtils {
     return [false]
   }
 
-  // 添加订阅
-  static addSubLink(url: string) {
-    return subLinkFileWrapper(url).add()
+  // 添加订阅节点
+  static addSubLink(url: string, note: string) {
+    return subLinkFileWrapper(url).add(note)
   }
 
-  // 删除订阅
+  // 删除订阅节点, 不传递id则为删除所有的订阅
   static removeSubLink(id?: string): boolean {
     return subLinkFileWrapper(id).remove()
   }
 
-  // 获取订阅, 不传递则为获取全部
-  static getSubLink(id?: string): any[] | null {
+  // 获取订阅节点, 不传递id则为获取全部
+  static getSubLink(id?: string): any | null {
     return subLinkFileWrapper(id).get()
   }
 
-  // 更新订阅
+  /*
+  ** 更新某个订阅节点的信息
+  ** @param {string} id
+  ** @param {subLinkItemInterface} conf
+  */
   static updateSubLink(id: string, conf: subLinkItemInterface): boolean {
     return subLinkFileWrapper(id).update(conf)
   }
 
-  // 创建订阅
-  static createSubLinkNodeFile(code: string, data: any): boolean {
+  /*
+  ** 创建一个订阅节点文件
+  ** @param {string} code 生成的ID
+  ** @param {any} data 存储的值, any[]
+  */
+  static createSubLinkNodeFile(id: string, data: any): boolean {
     try {
-      const full = path.join(subLinkUnderProfile, `${ code }.json`)
+      const full = getSubLinkNodeFilePath(id)
       fs.ensureFileSync(full)
       fs.writeFileSync(full, JSON.stringify(data))
       return true
@@ -375,8 +383,48 @@ export class ssrUtils {
     }
   }
 
+  // 获取订阅详细信息(数组)
+  static fetchSubLinkNodeFile(id: string): any {
+    try {
+      const full = getSubLinkNodeFilePath(id)
+      return JSON.parse(fs.readFileSync(full).toString('utf-8'))
+    } catch (error) {
+      return false
+    }
+  }
+
+  // 更新订阅节点的节点
+  static updateSubLinkNodeFile = async (id: string): Promise<boolean> => {
+    try {
+      const full = getSubLinkNodeFilePath(id)
+      console.log('full: ', full);
+      const item = ssrUtils.getSubLink(id)
+      // console.log('item: ', item)
+      if (item && item['url']) {
+        const url = item['url']
+        console.log('url: ', url);
+        const sync = await fetchSubDataLink(url)
+        if (sync) {
+          fs.writeFileSync(full, JSON.stringify(sync))
+          return true
+        }
+      }
+      return false
+    } catch (error) {
+      return false
+    }
+  }
+
 }
 
+// 获取订阅节点路径
+export function getSubLinkNodeFilePath(id: string): string {
+  const full = path.join(subLinkUnderProfile, `${ id }.json`)
+  fs.ensureFileSync(full)
+  return full
+}
+
+// 获取程序主配置
 export const readAppConfZero = (): AppRuntimeConf | boolean => {
   try {
     const config: AppRuntimeConf = JSON.parse(fs.readFileSync(xoRuntimeConfigFile, 'UTF-8'))
@@ -386,8 +434,9 @@ export const readAppConfZero = (): AppRuntimeConf | boolean => {
   }
 }
 
+// 设置程序主配置
 export const setUpAppConf = (conf: AppRuntimeConf): boolean => {
-  writeToMainLogFile(1,2)
+  // writeToMainLogFile(1,2)
   try {
     fs.writeFileSync(xoRuntimeConfigFile, JSON.stringify(conf), {
       encoding: 'utf-8'

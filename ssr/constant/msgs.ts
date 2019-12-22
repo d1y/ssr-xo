@@ -30,5 +30,8 @@ export const enum allTextMsg {
   updateSubLinkItemSucess = '更新单个订阅成功',
   updateSubLinkItemFail = '更新单个订阅失败',
   updateOnceByLinkSucess = '更新订阅成功',
-  updateOnceByLinkFail = '更新订阅失败'
+  updateOnceByLinkFail = '更新订阅失败',
+  fetchOnceNodeSucess = '获取单个节点成功',
+  testOnceNodeSucess = '测试节点成功, 可用!',
+  testOnceNodeFail = '测试节点失败, 不可用!',
 }
