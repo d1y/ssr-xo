@@ -1,12 +1,14 @@
 import http from 'http'
 import koa from 'koa'
-import router from './router'
 import koaStatic from 'koa-static'
 import { join } from 'path'
 import mount from 'koa-mount'
 import favicon from 'koa-favicon'
 import logger from 'koa-logger'
 import body from 'koa-body'
+import cors from '@koa/cors'
+import middleware from '@koa/router'
+import router from './router'
 
 import { isDev } from './config/index'
 import { createUUID, hexUUID } from './utils/index'
@@ -35,13 +37,27 @@ if (!isDev) {
 } else {
   App.use(koaStatic(join(__dirname, "../client/build")))
   App.use(favicon(favicon_path))
+  App.use(cors())
   App.use(logger())
 }
 
-App
-  .use(body())
+/*
+** 为了安全起见, 线上环境每次的路由都不同, 接口都不同
+*/
+const prefix: string = isDev ? '' : full
+const Api = new middleware({ prefix })
+Api
   .use(router.routes())
   .use(router.allowedMethods())
+
+// Api.stack.map(item=> {
+//   console.log('item: ', item['path']);
+// })
+
+App
+  .use(body())
+  .use(Api.routes())
+  .use(Api.allowedMethods())
   .use(favicon(favicon_path))
 
 const server = http.createServer(App.callback())
