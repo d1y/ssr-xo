@@ -35,6 +35,8 @@ interface Props extends React.Props<any> {
   readonly ctxStyle?: object
   // 整个包裹层样式
   readonly wrapStyle?: Object
+  // 是否启动`ssr`
+  readonly runtime?: boolean
 }
 
 const width = `100`
@@ -44,6 +46,9 @@ export default class extends React.Component<Props> {
   clickMenuHandle() {
 
   }
+
+  // 启动时间
+  
 
   render() {
     let { path, ctxStyle, wrapStyle } = this.props
@@ -71,11 +76,13 @@ export default class extends React.Component<Props> {
                   top: `-3px`,
                   left: `-8px`,
                   color: `rgba(255, 255, 255, .6)`
-                }}>{ false ? '🚀开启SSR' : '✋关闭SSR' }</span>
+                }}>{ !this.props.runtime ? '🚀开启SSR' : '✋关闭SSR' }</span>
                 <Switch
                   checkedChildren={<Icon type="check" />}
                   unCheckedChildren={<Icon type="close" />}
-                  defaultChecked
+                  checked={ this.props.runtime }
+                  loading={ false }
+                  // onClick={ ()=> }
                 />
               </Col>
             </Row>

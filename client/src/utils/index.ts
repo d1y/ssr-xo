@@ -16,3 +16,5 @@ export const  isUrl = (str: string): boolean => {
   }
   return false
 }
+
+// localStorage 示例
