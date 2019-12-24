@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title id="title">Hello, World!</title>
+  <link href="https://cdn.bootcss.com/bulma/0.7.5/css/bulma.min.css" rel="stylesheet">
+  <!-- Include eel.js - note this file doesn't exist in the 'web' directory -->
+  <script type="text/javascript" src="/eel.js"></script>
+  <script type="text/javascript" src="/config.js"></script>
+  <script type="text/javascript">
+    eel.expose(say_hello_js); // Expose this function to Python
+    function say_hello_js(x) {
+      console.log("Hello from " + x);
+    }
+
+    say_hello_js("Javascript World!");
+    const data = eel.loadPackage()()
+    console.log('data: ', data)
+    eel.say_hello_py("Javascript World!"); // Call a Python function
+  </script>
+  <style>
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .slide {
+      position: fixed;
+      bottom: 0;
+      background-size: 100%;
+      width: 50%;
+      height: 30vh;
+      z-index: -1;
+    }
+    #slide-left {
+      left: 0
+    }
+    #slide-right {
+      right: 0;
+      text-align: right;
+    }
+    .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 50vh;
+    }
+    .box {
+      width: 70%;
+      max-height: 50vh;
+      /* overflow: scroll; */
+      margin-left: 2rem;
+      background: #0a0a0a;
+      border-radius: 12px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(44,138,248,.5)
+    }
+    .box p {
+      line-height: 2;
+    }
+    #footer {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      width: 100vw;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" style="padding: 2rem;">
+    <div class="columns">
+      <div class="column">
+        <img :src="logo" style="vertical-align: middle;" />
+        <span class="flex" style="
+          display: inline-block;
+          font-size: 2rem;
+          color: #fff;
+          padding: 0 5px;
+          margin-left: 2rem;
+        " :style="{ background: color }">{{ name }}</span>
+      </div>
+    </div>
+    <div class="wrapper">
+      <button class="button is-large is-black">🚀开启应用</button>
+      <div class="box">
+        <p>SSR端口: <span :style="{color: color}">1080</span></p>
+        <p>PAC路由: <span :style="{color: color}">12333</span></p>
+        <p>WEB: <span :style="{color: color}">localhost:2333/dd/dd</span></p>
+        <p>运行时间: <span :style="{color: color}">01:01:01</span></p>
+      </div>
+    </div>
+    <div id="footer">
+      <h2 style="font-size: 1.2rem;"><a href="#">Follow me github</a></h2>
+      <p>当前版本: {{ 'v0.0.1' }}</p>
+    </div>
+    <div class="slide" id="slide-left">
+      <img :src="left" />
+    </div>
+    <div class="slide" id="slide-right">
+      <img :src="right" />
+    </div>
+  </div>
+</body>
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+<script type="text/javascript" src="/xo.js"></script>
+</html>
