@@ -5,6 +5,7 @@ import React from 'react'
 import {
   HashRouter as Router,
   Route,
+  Switch
 } from 'react-router-dom'
 
 import Index from './page/index'
@@ -17,11 +18,13 @@ export default class extends React.Component {
   render() {
     return (
       <Router>
-        <Route path="/index" component={ Index } />
-        <Route path="/thanks" component={ Thank } />
-        <Route path="/proxy" component={ Proxy } />
-        <Route path="/status" component={ Status } />
-        <Route path="*" component={ Not } />
+        <Switch>
+          <Route path="/index" component={ Index } />
+          <Route path="/thanks" component={ Thank } />
+          <Route path="/proxy" component={ Proxy } />
+          <Route path="/status" component={ Status } />
+          <Route path="*" component={ Not } />
+        </Switch>
       </Router>
     )
   }
