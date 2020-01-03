@@ -1,6 +1,7 @@
 # create by @d1y in 2019-12-18
 # 目前所有的接口地址都在 `/api` 下
-@api = http://localhost:2333/api
+@base = http://localhost:2333
+@api = {{base}}/api
 @sub = {{api}}/ssr/sub
 
 # ssr相关
@@ -77,6 +78,15 @@ Content-Type: application/json
   "url": "https://cylink.sub.tips/link/aywrT2Kxg7UtiOJ7?sub=1&extend=1"
 }
 
+###
+
+### pac服务(自定义端口)
+@uport = 2333
+GET {{base}}/pac/diy/{{uport}}
+###
+
+### 初始化pac文件
+GET {{base}}/pac/init
 ###
 
 ##

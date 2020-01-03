@@ -35,29 +35,43 @@ interface Props extends React.Props<any> {
   readonly ctxStyle?: object
   // 整个包裹层样式
   readonly wrapStyle?: Object
-  // 是否启动`ssr`
-  readonly runtime?: boolean
 }
 
 const width = `100`
 
 export default class extends React.Component<Props> {
 
-  clickMenuHandle() {
+  state = {
+    runtimeMode: false
+  }
+
+  // `ssr`运行时
+  runtimeMode = ()=> {
 
   }
 
-  // 启动时间
-  
+  // 改变运行时
+  changeRuntimeMode = ()=> {
+    const mode = this.state.runtimeMode
+    console.log('mode: ', mode)
+    this.setState({
+      runtimeMode: !mode
+    })
+  }
 
   render() {
+
     let { path, ctxStyle, wrapStyle } = this.props
+    
     const now = fetchMenu((path as string))
+
     ctxStyle = Object.assign({ padding: '1rem' }, ctxStyle)
+
     wrapStyle = Object.assign({
       height: `${width}vh`,
       overflow: 'hidden'
     }, wrapStyle)
+
     return (
       <React.Fragment>
         <Layout style={wrapStyle}>
@@ -76,13 +90,13 @@ export default class extends React.Component<Props> {
                   top: `-3px`,
                   left: `-8px`,
                   color: `rgba(255, 255, 255, .6)`
-                }}>{ !this.props.runtime ? '🚀开启SSR' : '✋关闭SSR' }</span>
+                }}>{ !this.state.runtimeMode ? '🚀开启SSR' : '✋关闭SSR' }</span>
                 <Switch
                   checkedChildren={<Icon type="check" />}
                   unCheckedChildren={<Icon type="close" />}
-                  checked={ this.props.runtime }
+                  checked={ this.state.runtimeMode }
                   loading={ false }
-                  // onClick={ ()=> }
+                  onClick={ this.changeRuntimeMode }
                 />
               </Col>
             </Row>
@@ -93,7 +107,7 @@ export default class extends React.Component<Props> {
                 <Menu defaultSelectedKeys={[now]} mode="inline" >
                   { menuLists.map((item, index) => {
                     return (
-                      <Menu.Item onClick={e => this.clickMenuHandle} key={index}>
+                      <Menu.Item key={index}>
                         <Link to={item.path}>
                           <Icon type={item.icon} />
                           <span>{item.text}</span>

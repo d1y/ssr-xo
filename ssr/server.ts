@@ -13,6 +13,7 @@ import router from './router'
 import { isDev } from './config/index'
 import { createUUID, hexUUID } from './utils/index'
 import { AppRuntimeConf } from './interface'
+import { initPAC } from './utils/pac'
 
 // https://stackoverflow.com/questions/54285727/why-cant-i-serve-static-files-from-a-koa-router
 const App = new koa
@@ -59,6 +60,9 @@ App
   .use(Api.routes())
   .use(Api.allowedMethods())
   .use(favicon(favicon_path))
+
+// 创建`pac`中间件
+initPAC(App)
 
 const server = http.createServer(App.callback())
 

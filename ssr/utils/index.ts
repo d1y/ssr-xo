@@ -170,3 +170,14 @@ export const writeToMainLogFile = (...args: Array<any>): void => {
     fs.appendFileSync(appRuntimeLogFile, item)
   })
 }
+
+// * is-number <https://github.com/jonschlinkert/is-number>
+export const isNumber = (num: any): boolean => {
+  if (typeof num === 'number') {
+    return num - num === 0;
+  }
+  if (typeof num === 'string' && num.trim() !== '') {
+    return Number.isFinite ? Number.isFinite(+num) : isFinite(+num);
+  }
+  return false;
+}

@@ -36,6 +36,9 @@ export const subLinkMainProfile: string = path.join(SUB_PATH, 'subscription.conf
 // 订阅节点
 export const subLinkUnderProfile: string = path.join(SUB_PATH, './node')
 
+// pac 文件
+export const PAC_FILE: string = path.join(ROOT_PATH, 'pac.txt')
+
 // 配置节点
 
 // `package.json` 内容
@@ -73,7 +76,8 @@ export const enum logType {
 export const enum routerPrefix {
   wrapper = '/api',
   ssr = '/ssr',
-  utils = '/utils'
+  utils = '/utils',
+  pac  = '/pac'
 }
 
 // 添加节点时的状态
